@@ -1,33 +1,29 @@
 import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { checkAuthorizationExists } from "../../use-cases/authentication/middlewares/check-authentication-exist";
-import { statusTypeEnum } from "../../use-cases/projects/dtos/req/project";
 import { createProject } from "../../use-cases/projects/create-project";
 import { listProjects } from "../../use-cases/projects/get-list-projects";
+import { handleError } from "../../common/errors/customized.error";
+import {
+  CreatedProjectResSchema,
+  CreateProjectReqSchema,
+} from "../../use-cases/projects/const/create-project-zod-schema.res";
+import { ListProjectResSchema } from "../../use-cases/projects/const/list-project-zod-schema.res";
 
 export const projectRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/",
     {
       schema: {
+        summary: "create project by users",
+        tags: ["Project"],
         headers: z.object({
           authorization: z.string(),
         }),
-        body: z.object({
-          name: z.string(),
-          client: z.string(),
-          address: z.string(),
-          uf: z.string(),
-          house_number: z.number(),
-          status: z.enum([
-            statusTypeEnum.initialized,
-            statusTypeEnum.in_progress,
-            statusTypeEnum.stopped,
-            statusTypeEnum.finished,
-          ]),
-          area: z.number(),
-          price: z.number(),
-        }),
+        body: CreateProjectReqSchema,
+        response: {
+          201: CreatedProjectResSchema,
+        },
       },
       preHandler: [checkAuthorizationExists],
     },
@@ -38,7 +34,7 @@ export const projectRoute: FastifyPluginAsyncZod = async (app) => {
 
         const { authorization } = request.headers;
 
-        return await createProject(authorization, {
+        const project = await createProject(authorization, {
           name,
           client,
           address,
@@ -48,15 +44,33 @@ export const projectRoute: FastifyPluginAsyncZod = async (app) => {
           area,
           price,
         });
+
+        return reply.code(201).send(project);
       } catch (error) {
-        return reply.status(500).send(error);
+        handleError(error);
       }
     }
   );
 
-  app.get("/", { preHandler: [checkAuthorizationExists] }, async () => {
-    return await listProjects();
-  });
+  app.get(
+    "/",
+    {
+      schema: {
+        summary: "list projects by users",
+        tags: ["Project"],
+        headers: z.object({
+          authorization: z.string(),
+        }),
+        response: {
+          200: ListProjectResSchema,
+        },
+      },
+      preHandler: [checkAuthorizationExists],
+    },
+    async () => {
+      return await listProjects();
+    }
+  );
 
   // app.get(
   //   "/:id",

@@ -1,4 +1,4 @@
-export interface createProjectReqDto {
+export interface CreateProjectReqDto {
   name: string;
   client: string;
   address: string;

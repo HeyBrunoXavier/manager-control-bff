@@ -1,6 +1,7 @@
 import fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import { fastifySwagger } from "@fastify/swagger";
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -25,6 +26,26 @@ app.register(fastifyCors, {
 
 app.setValidatorCompiler(validatorCompiler);
 app.setSerializerCompiler(serializerCompiler);
+
+app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: "MS Cst",
+      version: "0.1",
+    },
+    tags: [
+      { name: "Auth", description: "Authentication" },
+      { name: "Stock", description: "Control manager the stocks" },
+      { name: "Project", description: "Control Manager the Projects" },
+      { name: "Work Order", description: "Work Orders" },
+    ],
+  },
+  transform: jsonSchemaTransform,
+});
+
+app.register(fastifySwaggerUi, {
+  routePrefix: "/docs",
+});
 
 app.register(authenticationRoute, {
   prefix: "v1/auth",

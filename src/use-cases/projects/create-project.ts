@@ -1,7 +1,8 @@
 import { db } from "../../db";
 import { projects } from "../../db/schema";
 import { decodedToken } from "../../utils/create-token";
-import type { createProjectReqDto } from "./dtos/req/project";
+import type { CreateProjectReqDto } from "./dtos/req/project";
+import type { CreatedProjectResDto } from "./dtos/res/project";
 
 export async function createProject(
   authorization: string,
@@ -14,8 +15,8 @@ export async function createProject(
     status,
     area,
     price,
-  }: createProjectReqDto
-) {
+  }: CreateProjectReqDto
+): Promise<CreatedProjectResDto> {
   const userId = await decodedToken(authorization);
   const data = await db
     .insert(projects)

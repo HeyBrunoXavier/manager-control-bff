@@ -6,3 +6,14 @@ export class CustomError extends Error {
     this.status = status;
   }
 }
+
+export function handleError(error: unknown): never {
+  if (error instanceof Error) {
+    throw new CustomError(
+      error.message,
+      (error as { status?: number }).status ?? 500
+    );
+  }
+
+  throw new CustomError("Internal Server Error", 500);
+}
