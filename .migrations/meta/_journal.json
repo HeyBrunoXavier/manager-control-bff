@@ -8,6 +8,13 @@
       "when": 1728354973677,
       "tag": "0000_serious_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1739935143293,
+      "tag": "0001_pretty_thunderbolt",
+      "breakpoints": true
     }
   ]
 }

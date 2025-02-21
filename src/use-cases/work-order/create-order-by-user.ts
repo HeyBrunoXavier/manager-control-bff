@@ -1,10 +1,11 @@
-import { eq } from "drizzle-orm";
 import { db } from "../../db";
 import { stock_orders, stocks } from "../../db/schema";
 import { decodedToken } from "../../utils/create-token";
 import { validateItems } from "../../utils/validate-items-in-stock";
 import type { StockItemDto } from "./dtos/stock";
 import type { itemsReqDto } from "./dtos/item";
+import { updateStockQuantities } from "./repositories/stock.repository";
+import { shouldProjectOfUser } from "./repositories/project.repository";
 
 export interface AvailableItemsInStockResponseDto {
   availableItemsInStock: StockItemDto[];
@@ -30,26 +31,17 @@ export async function createOrderByUser(
     stockItems
   );
 
-  await updateQuantityFromStocks(data);
+  const projectId = await shouldProjectOfUser(userId);
+
+  await updateStockQuantities(data);
   await db
     .insert(stock_orders)
     .values({
       userId,
+      projectId,
       items,
     })
     .execute();
 
   return "order created successfully";
-}
-
-async function updateQuantityFromStocks(
-  data: AvailableItemsInStockResponseDto
-) {
-  for (const item of data.availableItemsInStock) {
-    await db
-      .update(stocks)
-      .set({ quantity: item.quantity })
-      .where(eq(stocks.id, item.id))
-      .execute();
-  }
 }

@@ -10,6 +10,9 @@ export const projectRoute: FastifyPluginAsyncZod = async (app) => {
     "/",
     {
       schema: {
+        headers: z.object({
+          authorization: z.string(),
+        }),
         body: z.object({
           name: z.string(),
           client: z.string(),
@@ -33,7 +36,9 @@ export const projectRoute: FastifyPluginAsyncZod = async (app) => {
         const { name, client, address, uf, house_number, status, area, price } =
           request.body;
 
-        return await createProject({
+        const { authorization } = request.headers;
+
+        return await createProject(authorization, {
           name,
           client,
           address,

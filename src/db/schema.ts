@@ -49,10 +49,13 @@ export const stock_orders = pgTable("stock_orders", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => createId()),
+  items: jsonb("items").notNull(),
   userId: text("user_id")
     .references(() => users.id)
     .notNull(),
-  items: jsonb("items").notNull(),
+  projectId: text("project_id")
+    .references(() => projects.id)
+    .notNull(),
   order_date: timestamp("order_date", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -79,6 +82,9 @@ export const projects = pgTable("projects", {
   status: statusEnum("status").notNull(),
   area: integer("area").notNull(),
   price: integer("price").notNull(),
+  userId: text("user_id")
+    .references(() => users.id)
+    .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
