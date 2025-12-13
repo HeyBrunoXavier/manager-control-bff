@@ -1,4 +1,4 @@
-<h1 align="center">MS CST – Backend API</h1>
+<h1 align="center">MANAGER CONTROL – Backend API</h1>
 
 <p align="center">
   API backend construída com <strong>Node.js</strong>, <strong>Fastify</strong> e <strong>TypeScript</strong>,
