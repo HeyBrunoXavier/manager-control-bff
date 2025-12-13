@@ -1,0 +1,63 @@
+# MS CST – API Backend
+
+API backend desenvolvida em **Node.js + Fastify**, com arquitetura modular, validação via **Zod**, documentação automática com **Swagger**, ORM **Drizzle**, e foco em escalabilidade e organização por domínio.
+
+---
+
+## 🚀 Tecnologias Utilizadas
+
+- **Node.js**
+- **Fastify**
+- **TypeScript**
+- **Zod** (validação e tipagem)
+- **fastify-type-provider-zod**
+- **Swagger / Swagger UI**
+- **Drizzle ORM**
+- **Docker / Docker Compose**
+- **JWT (autenticação)**
+
+---
+
+## 📁 Estrutura do Projeto
+
+```txt
+src/
+├── common/
+│   └── errors/
+│       └── customized.error.ts
+│
+├── config/
+│
+├── db/
+│
+├── http/
+│   ├── routes/
+│   │   ├── authentication.route.ts
+│   │   ├── stock.route.ts
+│   │   ├── project.route.ts
+│   │   └── work-order.route.ts
+│   │
+│   └── apps/
+│       ├── authentication/
+│       ├── projects/
+│       ├── stocks/
+│       └── work-order/
+│           ├── const/
+│           │   ├── work-order-zod-schema-req.ts
+│           │   └── work-order-zod-schema-res.ts
+│           ├── dtos/
+│           ├── repositories/
+│           ├── utils/
+│           ├── create-order-by-user.ts
+│           └── update-order-by-user.ts
+│
+├── utils/
+│
+├── main.ts
+│
+.env
+.env-example
+docker-compose.yml
+drizzle.config.ts
+package.json
+tsconfig.json
