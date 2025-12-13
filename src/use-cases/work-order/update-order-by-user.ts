@@ -17,7 +17,7 @@ export interface AvailableItemsInStockResponseDto {
 export async function updateOrderByUser(
   orderList: itemsReqDto,
   order_id: string
-) {
+): Promise<string> {
   const stockItems = await db
     .select({
       id: stocks.id,

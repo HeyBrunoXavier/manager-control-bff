@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 export type PayloadCreatedTokenDto = {
   id: string;

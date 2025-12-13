@@ -14,7 +14,7 @@ export interface AvailableItemsInStockResponseDto {
 export async function createOrderByUser(
   authorization: string,
   items: itemsReqDto
-) {
+): Promise<string> {
   const userId = await decodedToken(authorization);
 
   const stockItems = await db

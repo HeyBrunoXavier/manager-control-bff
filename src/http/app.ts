@@ -62,3 +62,7 @@ app.register(projectRoute, {
 app.register(workOrderRoute, {
   prefix: "v1/work-order",
 });
+
+app.ready(() => {
+  console.log(app.printRoutes());
+});

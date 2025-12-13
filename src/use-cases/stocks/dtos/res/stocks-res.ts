@@ -1,14 +1,14 @@
-export class StockResDto {
+export interface StockResDto {
   id: string;
   name: string;
   stock_type: "materials" | "equipments" | "machines";
   quantity: number;
 }
 
-export class StockListResDto {
+export interface StockListResDto {
   stocks: {
-    materials: Stock[];
-    equipments: Stock[];
-    machines: Stock[];
+    materials: StockResDto[];
+    equipments: StockResDto[];
+    machines: StockResDto[];
   };
 }

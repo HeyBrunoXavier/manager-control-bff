@@ -7,25 +7,32 @@ import { getStockById } from "../../use-cases/stocks/get-stock-by-id";
 import { updateStockById } from "../../use-cases/stocks/update-stock-by-id";
 import { deleteStockById } from "../../use-cases/stocks/delete-stock-by-id";
 import { checkAuthorizationExists } from "../../use-cases/authentication/middlewares/check-authentication-exist";
+import { handleError } from "../../common/errors/customized.error";
+import {
+  CreateItemInStockResZodSchema,
+  GetItemByIdInStockResZodSchema,
+  ListItemsInStockResZodSchema,
+} from "../../use-cases/stocks/const/stock-zod-schema.res";
+import {
+  CreateItemInStockReqZodSchema,
+  GetItemByIdInStockReqZodSchema,
+} from "../../use-cases/stocks/const/stock-zod-schema.req";
 
 export const stockRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/",
     {
       schema: {
-        body: z.object({
-          name: z.string(),
-          stock_type: z.enum([
-            stockTypeEnum.materials,
-            stockTypeEnum.equipments,
-            stockTypeEnum.machines,
-          ]),
-          quantity: z.number(),
-        }),
+        summary: "create item in stock",
+        tags: ["Stock"],
+        body: CreateItemInStockReqZodSchema,
+        response: {
+          201: CreateItemInStockResZodSchema,
+        },
       },
       preHandler: [checkAuthorizationExists],
     },
-    async (request, reply) => {
+    async (request) => {
       try {
         const { name, stock_type, quantity } = request.body;
 
@@ -35,31 +42,47 @@ export const stockRoute: FastifyPluginAsyncZod = async (app) => {
           quantity,
         });
       } catch (error) {
-        return reply.status(500).send(error);
+        handleError(error);
       }
     }
   );
 
-  app.get("/", { preHandler: [checkAuthorizationExists] }, async () => {
-    return await listStocks();
-  });
+  app.get(
+    "/",
+    {
+      schema: {
+        summary: "get list of items in stock",
+        tags: ["Stock"],
+        response: {
+          200: ListItemsInStockResZodSchema,
+        },
+      },
+      preHandler: [checkAuthorizationExists],
+    },
+    async () => {
+      return await listStocks();
+    }
+  );
 
   app.get(
     "/:id",
     {
       schema: {
-        params: z.object({
-          id: z.string(),
-        }),
+        summary: "get item for id",
+        tags: ["Stock"],
+        params: GetItemByIdInStockReqZodSchema,
+        response: {
+          200: GetItemByIdInStockResZodSchema,
+        },
       },
       preHandler: [checkAuthorizationExists],
     },
-    async (request, reply) => {
+    async (request) => {
       try {
         const { id } = request.params;
         return await getStockById(id);
       } catch (error) {
-        return reply.status(500).send(error);
+        handleError(error);
       }
     }
   );
@@ -68,6 +91,8 @@ export const stockRoute: FastifyPluginAsyncZod = async (app) => {
     "/:id",
     {
       schema: {
+        summary: "update item for id",
+        tags: ["Stock"],
         params: z.object({
           id: z.string(),
         }),
@@ -104,6 +129,8 @@ export const stockRoute: FastifyPluginAsyncZod = async (app) => {
     "/:id",
     {
       schema: {
+        summary: "delete item for id",
+        tags: ["Stock"],
         params: z.object({
           id: z.string(),
         }),

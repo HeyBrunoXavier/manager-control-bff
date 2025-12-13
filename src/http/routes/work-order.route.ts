@@ -4,27 +4,25 @@ import { createOrderByUser } from "../../use-cases/work-order/create-order-by-us
 import { checkAuthorizationExists } from "../../use-cases/authentication/middlewares/check-authentication-exist";
 import type { itemsReqDto } from "../../use-cases/work-order/dtos/item";
 import { updateOrderByUser } from "../../use-cases/work-order/update-order-by-user";
-import { stockTypeEnum } from "../../use-cases/stocks/dtos/req/stock-req";
-
-const itemsSchema = z.object({
-  name: z.string(),
-  stock_type: z
-    .enum([stockTypeEnum.equipments, stockTypeEnum.machines])
-    .optional(),
-  quantity: z.number(),
-});
+import { CreateWorkOrderResZodSchema } from "../../use-cases/work-order/const/work-order-zod-schema.res";
+import { itemsSchema } from "../../use-cases/work-order/const/work-order-zod-schema.req";
 
 export const workOrderRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/",
     {
       schema: {
+        summary: "list work orders",
+        tags: ["Work Order"],
         headers: z.object({
           authorization: z.string(),
         }),
         body: z.object({
           items: z.array(itemsSchema),
         }),
+        response: {
+          201: CreateWorkOrderResZodSchema,
+        },
       },
       preHandler: [checkAuthorizationExists],
     },
@@ -40,12 +38,17 @@ export const workOrderRoute: FastifyPluginAsyncZod = async (app) => {
     "/:order_id",
     {
       schema: {
+        summary: "update work orders",
+        tags: ["Work Order"],
         params: z.object({
           order_id: z.string(),
         }),
         body: z.object({
           items: z.array(itemsSchema),
         }),
+        response: {
+          201: CreateWorkOrderResZodSchema,
+        },
       },
       preHandler: [checkAuthorizationExists],
     },

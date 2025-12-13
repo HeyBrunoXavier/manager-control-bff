@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";
 import { authentication } from "../../use-cases/authentication/singIn";
 import { handleError } from "../../common/errors/customized.error";
+import { AuthenticationReqSchema } from "../../use-cases/authentication/const/authentication-zod-schema.req";
 
 export const authenticationRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -10,10 +11,7 @@ export const authenticationRoute: FastifyPluginAsyncZod = async (app) => {
       schema: {
         summary: "authenticate user",
         tags: ["Auth"],
-        body: z.object({
-          email: z.string(),
-          password: z.string(),
-        }),
+        body: AuthenticationReqSchema,
         response: {
           201: z.object({ token: z.string() }),
         },
