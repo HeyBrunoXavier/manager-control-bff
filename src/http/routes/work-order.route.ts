@@ -4,15 +4,19 @@ import { createOrderByUser } from "../../use-cases/work-order/create-order-by-us
 import { checkAuthorizationExists } from "../../use-cases/authentication/middlewares/check-authentication-exist";
 import type { itemsReqDto } from "../../use-cases/work-order/dtos/item";
 import { updateOrderByUser } from "../../use-cases/work-order/update-order-by-user";
-import { CreateWorkOrderResZodSchema } from "../../use-cases/work-order/const/work-order-zod-schema.res";
+import {
+  CreateWorkOrderResZodSchema,
+  ListWorkOrderByUserZodSchema,
+} from "../../use-cases/work-order/const/work-order-zod-schema.res";
 import { itemsSchema } from "../../use-cases/work-order/const/work-order-zod-schema.req";
+import { listOrderByUser } from "../../use-cases/work-order/list-order-by-user";
 
 export const workOrderRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     "/",
     {
       schema: {
-        summary: "list work orders",
+        summary: "create work orders",
         tags: ["Work Order"],
         headers: z.object({
           authorization: z.string(),
@@ -31,6 +35,27 @@ export const workOrderRoute: FastifyPluginAsyncZod = async (app) => {
       const items: itemsReqDto = request.body;
 
       return await createOrderByUser(authorization, items);
+    }
+  );
+
+  app.get(
+    "/",
+    {
+      schema: {
+        summary: "list work orders by user",
+        tags: ["Work Order"],
+        headers: z.object({
+          authorization: z.string(),
+        }),
+        response: {
+          200: ListWorkOrderByUserZodSchema,
+        },
+      },
+      preHandler: [checkAuthorizationExists],
+    },
+    async (request) => {
+      const { authorization } = request.headers;
+      return await listOrderByUser(authorization);
     }
   );
 
